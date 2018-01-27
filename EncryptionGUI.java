@@ -1,4 +1,4 @@
-//package EncyptionProject;
+package EncyptionProject;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -53,18 +53,13 @@ public class EncryptionGUI extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					EncryptionGUI frame = new EncryptionGUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
+		 Runnable gui = () -> {
+	            EncryptionGUI frame = new EncryptionGUI();
+	            frame.setVisible(true);
+	            
+	        };//end runnable
+	        gui.run();
+	}//end main
 	/**
 	 * Create the frame.
 	 */
@@ -172,10 +167,14 @@ public class EncryptionGUI extends JFrame {
                                         printTextArea(inputEncrypted);
                                         //clear input field
                                         textField.setText(null);
-                                    }				
-				else {
+                                    }//end try
+                                    //what kind of error are we trying to catch here??
+                                    catch(Exception i) {
+                                    	}//end catch
+                                    }
+				else 
                                     System.out.println("nope");
-                                }//end else
+                                
 			}//end event handler
 		});
 		btnEncrypt.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
@@ -245,11 +244,11 @@ public class EncryptionGUI extends JFrame {
                                         //handle exception
                                     }//end catch
                                 }//end else if
-				else {
-                                    System.out.println("nope");
-                                }//end else
-			}
-		});
+				else 
+                System.out.println("nope");
+                                
+			}//end action performed
+		});//end action listener
 		
 		btnDecrypt.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/padlock-unlocked.png")));
 		
@@ -345,11 +344,12 @@ public class EncryptionGUI extends JFrame {
 		textArea.setBackground(Color.WHITE);
 		scrollPane.setViewportView(textArea);
 		contentPane.setLayout(gl_contentPane);
-                textArea.setEditable(false);               
-                
-	}
+        textArea.setEditable(false);               
+	}//end EncryptionGUI constructor        
+	
     //method prints output to textArea    
     public void printTextArea(String text) {
     textArea.setText(text);
-    }                                     
-}
+    }//end printTextArea                                     
+	
+}//end EncryptionGUI class
