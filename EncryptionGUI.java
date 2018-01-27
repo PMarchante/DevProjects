@@ -1,11 +1,7 @@
 package EncyptionProject;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.GroupLayout;
@@ -15,39 +11,29 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
-import javax.swing.JSeparator;
 import java.awt.Font;
 import java.awt.Color;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
-import java.awt.SystemColor;
-import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
-import java.awt.Button;
 import javax.swing.ImageIcon;
-import javax.swing.JLayeredPane;
-import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
 import java.awt.Toolkit;
-import java.awt.Window.Type;
-import javax.swing.ScrollPaneConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
+import java.awt.Dimension;
+import java.awt.Component;
 
 /*
 *@author Pedro Marchante
-*
-*/
-public class EncryptionGUI extends JFrame {
 
-	private JPanel contentPane;
+*/
+
+public class EncryptionGUI extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private JTextField textField;
-        private JTextArea textArea;
-        private String outText;
+    private JTextArea textArea;
+    private String outText;
+    private JPanel contentPane;
 
 	/**
 	 * Launch the application.
@@ -60,6 +46,7 @@ public class EncryptionGUI extends JFrame {
 	        };//end runnable
 	        gui.run();
 	}//end main
+	
 	/**
 	 * Create the frame.
 	 */
@@ -70,16 +57,16 @@ public class EncryptionGUI extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(EncryptionGUI.class.getResource("/Resources/lock.png")));
 		setForeground(Color.WHITE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 596, 424);
+		setBounds(100, 100, 832, 540);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(128, 128, 128));
 		contentPane.setForeground(Color.BLACK);
-		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 6, true));
 		setContentPane(contentPane);
 		setTitle("Encryptor");
 		
 		
 		JLabel lblInput = new JLabel("Input");
+		lblInput.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		
 		textField = new JTextField();
 		textField.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -88,245 +75,251 @@ public class EncryptionGUI extends JFrame {
 		textField.setColumns(10);
 		
 		JLabel lblOutput = new JLabel("Output");
+		lblOutput.setFont(new Font("Tahoma", Font.PLAIN, 15));
                 
                 //String outText = new String();
                 //JTextField outText = new JTextField();
                 
 		
 		JLabel lblEncryptionType = new JLabel("Encryption Type");
+		lblEncryptionType.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		String[] comboBoxInsert = {"AES", "Blowfish", "3DES", "Reverse Cipher", "Caesar Cipher", "Transposition Cipher"};
 		JComboBox comboBox = new JComboBox(comboBoxInsert);
 		
-		//actionlistener for upload file btn
+		
 		JButton btnUploadFile = new JButton("Upload file");
-		btnUploadFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				/*
-				 * 
-				 * upload file code goes here
-				 */
-			}
-		});
+		btnUploadFile.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		btnUploadFile.setPreferredSize(new Dimension(69, 23));
 		btnUploadFile.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/text-file.png")));
 		
+		//Actionlistener for upload file btn
+		btnUploadFile.addActionListener(e -> {
+			
+			//choose a file with jFile chooser
+			JFileChooser fileChoose = new JFileChooser(".");
+			//opens the file
+			fileChoose.showOpenDialog(null);
+			
+			//need to add more code to actually read the file
+			
+		});//end uploadBtn action listener
+		
 		JButton btnEncrypt = new JButton("Encrypt");
-                String inputEncrypted = new String();
-		btnEncrypt.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-                            String dropSelection = new String (comboBox.getSelectedItem().toString());
+		btnEncrypt.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		btnEncrypt.addActionListener(e -> {
+			
+			 String dropSelection = new String (comboBox.getSelectedItem().toString());
 				if (dropSelection.equals("AES")){
-                                    //create key for AES, needs to be updated with key not hardcoded
-                                    String aesKey = "abcdef1234567890abcdef1234567890";
-                                    byte[] keyBytes = DatatypeConverter.parseHexBinary(aesKey);
-                                    SecretKey key = new SecretKeySpec(keyBytes, "AES");
-                                    //get input text for encryption
-                                    String inputText = new String (textField.getText());
-                                    //create encryption
-                                    try {
-                                        encryption encrypter = new encryption (key);
-                                        String inputEncrypted = encrypter.encrypt(inputText);
-                                        //shows encrypted text in output
-                                        printTextArea(inputEncrypted);
-                                        //clears input field
-                                        textField.setText(null);
-                                    }
-                                    catch (Exception ex) {
-                                        //handle exception
-                                    }//end catch                                                                        
-                                }//end if
-                                else if (dropSelection.equals("Blowfish")){
-                                    //create key for Blowfish, needs to be updated with key not hardcoded
-                                    String fishKey = "abcdef1234567890abcdef1234567890";
-                                    byte[] keyBytes = DatatypeConverter.parseHexBinary(fishKey);
-                                    SecretKey key = new SecretKeySpec(keyBytes, "Blowfish");
-                                    //get input text for encryption
-                                    String inputText = new String (textField.getText());
-                                    //create encryption
-                                    try {
-                                        Blowfish fishEncrypt = new Blowfish(key);
-                                        String inputEncrypted = fishEncrypt.encrypt(inputText);
-                                        //shows encrypted text in output box
-                                        printTextArea(inputEncrypted);
-                                        //clear input field
-                                        textField.setText(null);
-                                    }
-                                    catch (Exception ex) {
-                                        //handle exception
-                                    }//end catch
-                                }//end else if
-                                else if (dropSelection.equals("3DES")){
-                                    //create key for Blowfish, needs to be updated with key not hardcoded
-                                    String threeDESKey = "This is a 3DES key Lets see it encrypt!!!";
-                                    //get input text for encryption
-                                    String inputText = new String (textField.getText());
-                                    //create encryption
-                                    try {
-                                        threeDES threeDES = new threeDES();
-                                        String inputEncrypted = threeDES.threeDESControl(inputText, threeDESKey, "encrypt");
-                                        //shows encrypted text in output box
-                                        printTextArea(inputEncrypted);
-                                        //clear input field
-                                        textField.setText(null);
-                                    }//end try
-                                    //what kind of error are we trying to catch here??
-                                    catch(Exception i) {
-                                    	}//end catch
-                                    }
+                                 //create key for AES, needs to be updated with key not hardcoded
+                                 String aesKey = "abcdef1234567890abcdef1234567890";
+                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(aesKey);
+                                 SecretKey key = new SecretKeySpec(keyBytes, "AES");
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                     encryption encrypter = new encryption (key);
+                                     String inputEncrypted = encrypter.encrypt(inputText);
+                                     //shows encrypted text in output
+                                     printTextArea(inputEncrypted);
+                                     //clears input field
+                                     textField.setText(null);
+                                 }
+                                 catch (Exception ex) {
+                                     //handle exception
+                                 }//end catch                                                                        
+                             }//end if
+                             else if (dropSelection.equals("Blowfish")){
+                                 //create key for Blowfish, needs to be updated with key not hardcoded
+                                 String fishKey = "abcdef1234567890abcdef1234567890";
+                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(fishKey);
+                                 SecretKey key = new SecretKeySpec(keyBytes, "Blowfish");
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                     Blowfish fishEncrypt = new Blowfish(key);
+                                     String inputEncrypted = fishEncrypt.encrypt(inputText);
+                                     //shows encrypted text in output box
+                                     printTextArea(inputEncrypted);
+                                     //clear input field
+                                     textField.setText(null);
+                                 }
+                                 catch (Exception ex) {
+                                     //handle exception
+                                 }//end catch
+                             }//end else if
+                             else if (dropSelection.equals("3DES")){
+                                 //create key for Blowfish, needs to be updated with key not hardcoded
+                                 String threeDESKey = "This is a 3DES key Lets see it encrypt!!!";
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                     threeDES threeDES = new threeDES();
+                                     String inputEncrypted = threeDES.threeDESControl(inputText, threeDESKey, "encrypt");
+                                     //shows encrypted text in output box
+                                     printTextArea(inputEncrypted);
+                                     //clear input field
+                                     textField.setText(null);
+                                 }//end try
+                                 //what kind of error are we trying to catch here??
+                                 catch(Exception i) {
+                                 	}//end catch
+                                 }
 				else 
-                                    System.out.println("nope");
-                                
-			}//end event handler
+				System.out.println("nope");
 		});
 		btnEncrypt.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
 		
 		
 		//action listener for decrypt btn
 		JButton btnDecrypt = new JButton("Decrypt");
-		btnDecrypt.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-                                String dropSelection = new String (comboBox.getSelectedItem().toString());
+		btnDecrypt.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		btnDecrypt.addActionListener(e -> {
+			 String dropSelection = new String (comboBox.getSelectedItem().toString());
 				if (dropSelection.equals("AES")){
-                                    //create key for AES, needs to be updated with key not hardcoded
-                                    String aesKey = "abcdef1234567890abcdef1234567890";
-                                    byte[] keyBytes = DatatypeConverter.parseHexBinary(aesKey);
-                                    SecretKey key = new SecretKeySpec(keyBytes, "AES");
-                                    //get input text for decryption
-                                    String inputText = new String (textField.getText());
-                                    //decrypt input
-                                    try {
-                                        encryption encrypter = new encryption (key);
-                                        String inputDecrypted = encrypter.decrypt(inputText);
-                                        //shows encrypted text in output
-                                        printTextArea(inputDecrypted);
-                                        //clears input field
-                                        textField.setText(null);
-                                    }
-                                    catch (Exception ex) {
-                                        //handle exception
-                                    }//end catch                                                                        
-                                }//end if
-                                else if (dropSelection.equals("Blowfish")){
-                                    //create key for Blowfish, needs to be updated with key not hardcoded
-                                    String fishKey = "abcdef1234567890abcdef1234567890";
-                                    byte[] keyBytes = DatatypeConverter.parseHexBinary(fishKey);
-                                    SecretKey key = new SecretKeySpec(keyBytes, "Blowfish");
-                                    //get input text for encryption
-                                    String inputText = new String (textField.getText());
-                                    //create encryption
-                                    try {
-                                        Blowfish fishEncrypt = new Blowfish(key);
-                                        String inputDecrypted = fishEncrypt.decrypt(inputText);
-                                        //shows encrypted text in output box
-                                        printTextArea(inputDecrypted);
-                                        //clear input field
-                                        textField.setText(null);
-                                    }
-                                    catch (Exception ex) {
-                                        //handle exception
-                                    }//end catch
-                                }//end else if
-                               else if (dropSelection.equals("3DES")){
-                                    //create key for Blowfish, needs to be updated with key not hardcoded
-                                    String threeDESKey = "This is a 3DES key Lets see it encrypt!!!";
-                                    //get input text for encryption
-                                    String inputText = new String (textField.getText());
-                                    //create encryption
-                                    try {
-                                        threeDES threeDES = new threeDES();
-                                        String inputEncrypted = threeDES.threeDESControl(inputText, threeDESKey, "decrypt");
-                                        //shows encrypted text in output box
-                                        printTextArea(inputEncrypted);
-                                        //clear input field
-                                        textField.setText(null);
-                                    }
-                                    catch (Exception ex) {
-                                        //handle exception
-                                    }//end catch
-                                }//end else if
+                                 //create key for AES, needs to be updated with key not hardcoded
+                                 String aesKey = "abcdef1234567890abcdef1234567890";
+                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(aesKey);
+                                 SecretKey key = new SecretKeySpec(keyBytes, "AES");
+                                 //get input text for decryption
+                                 String inputText = new String (textField.getText());
+                                 //decrypt input
+                                 try {
+                                     encryption encrypter = new encryption (key);
+                                     String inputDecrypted = encrypter.decrypt(inputText);
+                                     //shows encrypted text in output
+                                     printTextArea(inputDecrypted);
+                                     //clears input field
+                                     textField.setText(null);
+                                 }
+                                 catch (Exception ex) {
+                                     //handle exception
+                                 }//end catch                                                                        
+                             }//end if
+                             else if (dropSelection.equals("Blowfish")){
+                                 //create key for Blowfish, needs to be updated with key not hardcoded
+                                 String fishKey = "abcdef1234567890abcdef1234567890";
+                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(fishKey);
+                                 SecretKey key = new SecretKeySpec(keyBytes, "Blowfish");
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                     Blowfish fishEncrypt = new Blowfish(key);
+                                     String inputDecrypted = fishEncrypt.decrypt(inputText);
+                                     //shows encrypted text in output box
+                                     printTextArea(inputDecrypted);
+                                     //clear input field
+                                     textField.setText(null);
+                                 }
+                                 catch (Exception ex) {
+                                     //handle exception
+                                 }//end catch
+                             }//end else if
+                            else if (dropSelection.equals("3DES")){
+                                 //create key for Blowfish, needs to be updated with key not hardcoded
+                                 String threeDESKey = "This is a 3DES key Lets see it encrypt!!!";
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                     threeDES threeDES = new threeDES();
+                                     String inputEncrypted = threeDES.threeDESControl(inputText, threeDESKey, "decrypt");
+                                     //shows encrypted text in output box
+                                     printTextArea(inputEncrypted);
+                                     //clear input field
+                                     textField.setText(null);
+                                 }
+                                 catch (Exception ex) {
+                                     //handle exception
+                                 }//end catch
+                             }//end else if
 				else 
-                System.out.println("nope");
-                                
-			}//end action performed
+				System.out.println("nope");
+			
 		});//end action listener
 		
 		btnDecrypt.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/padlock-unlocked.png")));
 		
 		JButton btnEmail = new JButton("Email");
-		btnEmail.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				/*
-				 * 
-				 * email btn code goes here
-				 */
-			}
+		btnEmail.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		btnEmail.setPreferredSize(new Dimension(69, 23));
+		btnEmail.setMinimumSize(new Dimension(69, 23));
+		btnEmail.setMaximumSize(new Dimension(69, 23));
+		btnEmail.addActionListener(e -> {
+		
+			/*
+			 * put action listener code here!!
+			 */
+			
 		});
 		btnEmail.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/close-envelope.png")));
 		
-                //scrollpane
+        //scrollpane
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportBorder(new MatteBorder(2, 2, 2, 2, (Color) Color.RED));
 		
 		//action listener for encrypt to file btn
 		JButton btnEncryptToFile = new JButton("Encrypt to file");
-		btnEncryptToFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				/*
-				 * encrypt to file code goes here
-				 */
-			}
-		});
+		btnEncryptToFile.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		btnEncryptToFile.addActionListener(e -> {
+			/*
+			 * put action listener code here
+			 */
+			
+					});
 		btnEncryptToFile.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(20)
-									.addComponent(lblInput)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 197, GroupLayout.PREFERRED_SIZE)
+									.addComponent(lblInput, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, 458, Short.MAX_VALUE)
+									.addComponent(lblEncryptionType)
 									.addGap(18)
-									.addComponent(lblEncryptionType))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addContainerGap()
-									.addComponent(lblOutput)))
-							.addPreferredGap(ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(btnDecrypt, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnEncrypt, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(comboBox, Alignment.TRAILING, 0, 161, Short.MAX_VALUE)))
+									.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(407)
-							.addComponent(btnEncryptToFile, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
+							.addContainerGap()
+							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(lblOutput)
+							.addGap(588)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnDecrypt, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+								.addComponent(btnEncryptToFile, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+								.addComponent(btnEncrypt, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(643)
+							.addComponent(btnUploadFile, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addGap(643)
+							.addComponent(btnEmail, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
 					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(btnEmail, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-						.addComponent(btnUploadFile, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
-					.addGap(432))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblInput)
-						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblEncryptionType)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
+						.addComponent(lblInput, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
-					.addComponent(btnUploadFile)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(btnEmail)
-					.addGap(115)
+					.addComponent(textField, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
+					.addGap(126)
+					.addComponent(btnUploadFile, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnEmail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnEncryptToFile)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnEncrypt)
@@ -334,9 +327,9 @@ public class EncryptionGUI extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addComponent(lblOutput)
 						.addComponent(btnDecrypt))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-					.addGap(468))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+					.addGap(346))
 		);
 		
 		textArea = new JTextArea();
