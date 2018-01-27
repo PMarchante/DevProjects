@@ -22,6 +22,10 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.awt.Dimension;
 import java.awt.Component;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /*
 *@author Pedro Marchante
@@ -59,6 +63,7 @@ public class EncryptionGUI extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 832, 540);
 		contentPane = new JPanel();
+		contentPane.setBorder(new MatteBorder(4, 4, 4, 4, (Color) new Color(0, 0, 0)));
 		contentPane.setBackground(new Color(128, 128, 128));
 		contentPane.setForeground(Color.BLACK);
 		setContentPane(contentPane);
@@ -67,12 +72,6 @@ public class EncryptionGUI extends JFrame {
 		
 		JLabel lblInput = new JLabel("Input");
 		lblInput.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		
-		textField = new JTextField();
-		textField.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		textField.setForeground(new Color(0, 0, 0));
-		textField.setBackground(new Color(255, 255, 255));
-		textField.setColumns(10);
 		
 		JLabel lblOutput = new JLabel("Output");
 		lblOutput.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -88,7 +87,6 @@ public class EncryptionGUI extends JFrame {
 		
 		
 		JButton btnUploadFile = new JButton("Upload file");
-		btnUploadFile.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		btnUploadFile.setPreferredSize(new Dimension(69, 23));
 		btnUploadFile.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/text-file.png")));
 		
@@ -175,6 +173,7 @@ public class EncryptionGUI extends JFrame {
 		
 		//action listener for decrypt btn
 		JButton btnDecrypt = new JButton("Decrypt");
+		btnDecrypt.setPreferredSize(new Dimension(69, 23));
 		btnDecrypt.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		btnDecrypt.addActionListener(e -> {
 			 String dropSelection = new String (comboBox.getSelectedItem().toString());
@@ -244,7 +243,7 @@ public class EncryptionGUI extends JFrame {
 		btnDecrypt.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/padlock-unlocked.png")));
 		
 		JButton btnEmail = new JButton("Email");
-		btnEmail.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		btnEmail.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnEmail.setPreferredSize(new Dimension(69, 23));
 		btnEmail.setMinimumSize(new Dimension(69, 23));
 		btnEmail.setMaximumSize(new Dimension(69, 23));
@@ -263,6 +262,7 @@ public class EncryptionGUI extends JFrame {
 		
 		//action listener for encrypt to file btn
 		JButton btnEncryptToFile = new JButton("Encrypt to file");
+		btnEncryptToFile.setPreferredSize(new Dimension(69, 23));
 		btnEncryptToFile.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		btnEncryptToFile.addActionListener(e -> {
 			/*
@@ -271,66 +271,98 @@ public class EncryptionGUI extends JFrame {
 			
 					});
 		btnEncryptToFile.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
+		
+		JScrollPane InputScrollPane = new JScrollPane();
+		InputScrollPane.setViewportBorder(new MatteBorder(2, 2, 2, 2, (Color) Color.RED));
+		InputScrollPane.setAlignmentY(Component.TOP_ALIGNMENT);
+		InputScrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		InputScrollPane.setPreferredSize(new Dimension(25, 25));
+		
+		JButton btnLoadKeyFrom = new JButton("Load Key from file");
+		btnLoadKeyFrom.addActionListener(e -> {
+			
+			//opens a jpane for user to pick the file that contains the key
+			JFileChooser keyloader = new JFileChooser(".");
+			keyloader.showOpenDialog(null);
+			/*
+			 * add code for load key btn
+			 */
+			
+		});//end action listener for load key btn
+		
+		btnLoadKeyFrom.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/text-file.png")));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(lblInput, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, 458, Short.MAX_VALUE)
-									.addComponent(lblEncryptionType)
-									.addGap(18)
-									.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblOutput)
-							.addGap(588)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnDecrypt, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
-								.addComponent(btnEncryptToFile, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
-								.addComponent(btnEncrypt, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(643)
-							.addComponent(btnUploadFile, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
 						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addGap(643)
-							.addComponent(btnEmail, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
-					.addContainerGap())
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
+									.addGap(761))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+										.addComponent(InputScrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addComponent(lblInput, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(ComponentPlacement.RELATED, 458, Short.MAX_VALUE)
+											.addComponent(lblEncryptionType)
+											.addGap(18)
+											.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)))
+									.addGap(19)))
+							.addContainerGap())
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 790, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+									.addComponent(btnDecrypt, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnEncrypt, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnEncryptToFile, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnEmail, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnUploadFile, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+									.addComponent(btnLoadKeyFrom, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+							.addGap(23))))
 		);
 		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblEncryptionType)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblEncryptionType)
+								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
+							.addGap(18))
 						.addComponent(lblInput, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addComponent(textField, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
-					.addGap(126)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(InputScrollPane, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE)
+					.addGap(65)
 					.addComponent(btnUploadFile, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnEmail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnEncryptToFile)
+					.addComponent(btnEncryptToFile, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnEncrypt)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(lblOutput)
-						.addComponent(btnDecrypt))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
-					.addGap(346))
+					.addComponent(btnDecrypt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnLoadKeyFrom)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblOutput)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
+		
+		textField = new JTextField();
+		InputScrollPane.setViewportView(textField);
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		textField.setForeground(new Color(0, 0, 0));
+		textField.setBackground(new Color(255, 255, 255));
+		textField.setColumns(10);
 		
 		textArea = new JTextArea();
 		textArea.setWrapStyleWord(true);
@@ -344,5 +376,4 @@ public class EncryptionGUI extends JFrame {
     public void printTextArea(String text) {
     textArea.setText(text);
     }//end printTextArea                                     
-	
 }//end EncryptionGUI class
