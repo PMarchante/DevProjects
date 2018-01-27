@@ -159,7 +159,21 @@ public class EncryptionGUI extends JFrame {
                                         //handle exception
                                     }//end catch
                                 }//end else if
-                                else {
+                                else if (dropSelection.equals("3DES")){
+                                    //create key for Blowfish, needs to be updated with key not hardcoded
+                                    String threeDESKey = "This is a 3DES key Lets see it encrypt!!!";
+                                    //get input text for encryption
+                                    String inputText = new String (textField.getText());
+                                    //create encryption
+                                    try {
+                                        threeDES threeDES = new threeDES();
+                                        String inputEncrypted = threeDES.threeDESControl(inputText, threeDESKey, "encrypt");
+                                        //shows encrypted text in output box
+                                        printTextArea(inputEncrypted);
+                                        //clear input field
+                                        textField.setText(null);
+                                    }				
+				else {
                                     System.out.println("nope");
                                 }//end else
 			}//end event handler
@@ -213,7 +227,25 @@ public class EncryptionGUI extends JFrame {
                                         //handle exception
                                     }//end catch
                                 }//end else if
-                                else {
+                               else if (dropSelection.equals("3DES")){
+                                    //create key for Blowfish, needs to be updated with key not hardcoded
+                                    String threeDESKey = "This is a 3DES key Lets see it encrypt!!!";
+                                    //get input text for encryption
+                                    String inputText = new String (textField.getText());
+                                    //create encryption
+                                    try {
+                                        threeDES threeDES = new threeDES();
+                                        String inputEncrypted = threeDES.threeDESControl(inputText, threeDESKey, "decrypt");
+                                        //shows encrypted text in output box
+                                        printTextArea(inputEncrypted);
+                                        //clear input field
+                                        textField.setText(null);
+                                    }
+                                    catch (Exception ex) {
+                                        //handle exception
+                                    }//end catch
+                                }//end else if
+				else {
                                     System.out.println("nope");
                                 }//end else
 			}
