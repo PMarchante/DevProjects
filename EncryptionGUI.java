@@ -165,7 +165,7 @@ public class EncryptionGUI extends JFrame {
                                  catch(Exception i) {
                                  	}//end catch
                                  }
-				else 
+			else 
 				System.out.println("nope");
 		});
 		btnEncrypt.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
@@ -235,7 +235,113 @@ public class EncryptionGUI extends JFrame {
                                      //handle exception
                                  }//end catch
                              }//end else if
-				else 
+				 else if (dropSelection.equals("Reverse Cipher")){
+                                
+                                //get input text for encryption
+                                String inputText = new String (textField.getText());
+                                //create encryption
+                                try {
+                               	 revers_Cipher revers = new revers_Cipher();
+                                    String inputEncrypted = revers.revers_Cipher(inputText);
+                                    //shows encrypted text in output box
+                                    printTextArea(inputEncrypted);
+                                    //clear input field
+                                    textField.setText(null);
+                                }//end try
+                                //what kind of error are we trying to catch here??
+                                catch(Exception i) {
+                                	}//end catch
+                                }
+                            else if (dropSelection.equals("Caesar Cipher")){
+                                
+                                //get input text for encryption
+                                String inputText = new String (textField.getText());
+                                String key = "5";
+                                //create encryption
+                                try {
+                               	 caesar_Cipher revers = new caesar_Cipher();
+                                    String inputEncrypted = revers.cipher(inputText, key, "decrypt" );
+                                    //shows encrypted text in output box
+                                    printTextArea(inputEncrypted);
+                                    //clear input field
+                                    textField.setText(null);
+                                }//end try
+                                //what kind of error are we trying to catch here??
+                                catch(Exception i) {
+                                	}//end catch
+                                }else if (dropSelection.equals("Transposition Cipher")){
+                                    
+                                    //get input text for encryption
+                                    String inputText = new String (textField.getText());
+                                    String key = "5";
+                                    //create encryption
+                                    try {
+                                   	 transposition_cipher transp = new transposition_cipher();
+                                        String inputEncrypted = transp.transpositionControl(inputText, key, "decrypt");
+                                        //shows encrypted text in output box
+                                        printTextArea(inputEncrypted);
+                                        //clear input field
+                                        textField.setText(null);
+                                    }//end try
+                                    //what kind of error are we trying to catch here??
+                                    catch(Exception i) {
+                                    	}//end catch
+                                    }
+			 else if (dropSelection.equals("Reverse Cipher")){
+                                 
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                	 revers_Cipher revers = new revers_Cipher();
+                                     String inputEncrypted = revers.revers_Cipher(inputText);
+                                     //shows encrypted text in output box
+                                     printTextArea(inputEncrypted);
+                                     //clear input field
+                                     textField.setText(null);
+                                 }//end try
+                                 //what kind of error are we trying to catch here??
+                                 catch(Exception i) {
+                                 	}//end catch
+                                 }
+                             else if (dropSelection.equals("Caesar Cipher")){
+                                 
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 String key = "5";
+                                 //create encryption
+                                 try {
+                                	 caesar_Cipher revers = new caesar_Cipher();
+                                     String inputEncrypted = revers.cipher(inputText, key, "encrypt" );
+                                     //shows encrypted text in output box
+                                     printTextArea(inputEncrypted);
+                                     //clear input field
+                                     textField.setText(null);
+                                 }//end try
+                                 //what kind of error are we trying to catch here??
+                                 catch(Exception i) {
+                                 	}//end catch
+                                 }
+                             else if (dropSelection.equals("Transposition Cipher")){
+                                 
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 String key = "5";
+                                 //create encryption
+                                 try {
+                                	 transposition_cipher transp = new transposition_cipher();
+                                    String inputEncrypted = transp.transpositionControl(inputText, key, "encrypt");
+                                     //shows encrypted text in output box
+                                     printTextArea(inputEncrypted);
+                                     //clear input field
+                                     textField.setText(null);
+                                 }//end try
+                                 //what kind of error are we trying to catch here??
+                                 catch(Exception i) {
+                                 	}//end catch
+                                 }
+			
+			else 
 				System.out.println("nope");
 			
 		});//end action listener
