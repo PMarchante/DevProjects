@@ -1,5 +1,3 @@
-package EncyptionProject;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -11,6 +9,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.border.MatteBorder;
@@ -26,17 +25,23 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /*
 *@author Pedro Marchante
-
 */
 
 public class EncryptionGUI extends JFrame {
-	private static final long serialVersionUID = 1L;
-	private JTextField textField;
+    private static final long serialVersionUID = 1L;
+    private JTextArea textField;
     private JTextArea textArea;
-    private String outText;
+    private String key = new String();
     private JPanel contentPane;
 
 	/**
@@ -75,11 +80,7 @@ public class EncryptionGUI extends JFrame {
 		
 		JLabel lblOutput = new JLabel("Output");
 		lblOutput.setFont(new Font("Tahoma", Font.PLAIN, 15));
-                
-                //String outText = new String();
-                //JTextField outText = new JTextField();
-                
-		
+               
 		JLabel lblEncryptionType = new JLabel("Encryption Type");
 		lblEncryptionType.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		String[] comboBoxInsert = {"AES", "Blowfish", "3DES", "Reverse Cipher", "Caesar Cipher", "Transposition Cipher"};
@@ -94,58 +95,71 @@ public class EncryptionGUI extends JFrame {
 		btnUploadFile.addActionListener(e -> {
 			
 			//choose a file with jFile chooser
-			JFileChooser fileChoose = new JFileChooser(".");
+			JFileChooser fileChoose = new JFileChooser(".\\Files\\");
 			//opens the file
 			fileChoose.showOpenDialog(null);
-			
-			//need to add more code to actually read the file
-			
+			//get file name
+			String fileName = fileChoose.getSelectedFile().getName();
+                        //get file
+                        File file = fileChoose.getSelectedFile();
+			//load file using loadFromFile method
+                        String fileText = loadFromFile(file, fileName);
+                        textField.setText(fileText);
 		});//end uploadBtn action listener
 		
 		JButton btnEncrypt = new JButton("Encrypt");
 		btnEncrypt.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		btnEncrypt.addActionListener(e -> {
-			
-			 String dropSelection = new String (comboBox.getSelectedItem().toString());
+			//get dropdown selection
+			String dropSelection = new String (comboBox.getSelectedItem().toString());                         
 				if (dropSelection.equals("AES")){
-                                 //create key for AES, needs to be updated with key not hardcoded
-                                 String aesKey = "abcdef1234567890abcdef1234567890";
-                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(aesKey);
-                                 SecretKey key = new SecretKeySpec(keyBytes, "AES");
-                                 //get input text for encryption
-                                 String inputText = new String (textField.getText());
-                                 //create encryption
-                                 try {
-                                     encryption encrypter = new encryption (key);
-                                     String inputEncrypted = encrypter.encrypt(inputText);
-                                     //shows encrypted text in output
-                                     printTextArea(inputEncrypted);
-                                     //clears input field
-                                     textField.setText(null);
-                                 }
-                                 catch (Exception ex) {
-                                     //handle exception
-                                 }//end catch                                                                        
-                             }//end if
+                                    if (!key.equals("")){                                        
+                                        //get secret key
+                                        SecretKey skey = getKey("AES", key);
+                                        //get input text for encryption
+                                        String inputText = new String (textField.getText());
+                                        //create encryption
+                                        try {
+                                            encryption encrypter = new encryption (skey);
+                                            String inputEncrypted = encrypter.encrypt(inputText);
+                                            //shows encrypted text in output
+                                            printTextArea(inputEncrypted);
+                                            //clears input field
+                                            textField.setText(null);
+                                        }
+                                        catch (Exception ex) {
+                                            //handle exception
+                                        }//end catch
+                                    }//end inner if
+                                    //if key is null
+                                    else {
+                                        JFrame frame = new JFrame ();
+                                        JOptionPane.showMessageDialog(frame, "Please select a key");                                        
+                                    }    
+                             }//end outer if
                              else if (dropSelection.equals("Blowfish")){
-                                 //create key for Blowfish, needs to be updated with key not hardcoded
-                                 String fishKey = "abcdef1234567890abcdef1234567890";
-                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(fishKey);
-                                 SecretKey key = new SecretKeySpec(keyBytes, "Blowfish");
-                                 //get input text for encryption
-                                 String inputText = new String (textField.getText());
-                                 //create encryption
-                                 try {
-                                     Blowfish fishEncrypt = new Blowfish(key);
-                                     String inputEncrypted = fishEncrypt.encrypt(inputText);
-                                     //shows encrypted text in output box
-                                     printTextArea(inputEncrypted);
-                                     //clear input field
-                                     textField.setText(null);
-                                 }
-                                 catch (Exception ex) {
-                                     //handle exception
-                                 }//end catch
+                                 if (!key.equals("")){
+                                    //get key
+                                    SecretKey skey = getKey("Blowfish", key);
+                                    //get input text for encryption
+                                    String inputText = new String (textField.getText());
+                                    //create encryption
+                                    try {
+                                        Blowfish fishEncrypt = new Blowfish(skey);
+                                        String inputEncrypted = fishEncrypt.encrypt(inputText);
+                                        //shows encrypted text in output box
+                                        printTextArea(inputEncrypted);
+                                        //clear input field
+                                        textField.setText(null);
+                                    }
+                                    catch (Exception ex) {
+                                        //handle exception
+                                    }//end catch
+                                    }//end if
+                                 else {
+                                        JFrame frame = new JFrame ();
+                                        JOptionPane.showMessageDialog(frame, "Please select a key");                                        
+                                    }
                              }//end else if
                              else if (dropSelection.equals("3DES")){
                                  //create key for Blowfish, needs to be updated with key not hardcoded
@@ -164,7 +178,8 @@ public class EncryptionGUI extends JFrame {
                                  //what kind of error are we trying to catch here??
                                  catch(Exception i) {
                                  	}//end catch
-                                 }else if (dropSelection.equals("Reverse Cipher")){
+                                 }
+                             else if (dropSelection.equals("Reverse Cipher")){
                                  
                                  //get input text for encryption
                                  String inputText = new String (textField.getText());
@@ -217,10 +232,7 @@ public class EncryptionGUI extends JFrame {
                                  catch(Exception i) {
                                  	}//end catch
                                  }
-			
-			
-			
-			else 
+				else 
 				System.out.println("nope");
 		});
 		btnEncrypt.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
@@ -233,15 +245,14 @@ public class EncryptionGUI extends JFrame {
 		btnDecrypt.addActionListener(e -> {
 			 String dropSelection = new String (comboBox.getSelectedItem().toString());
 				if (dropSelection.equals("AES")){
-                                 //create key for AES, needs to be updated with key not hardcoded
-                                 String aesKey = "abcdef1234567890abcdef1234567890";
-                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(aesKey);
-                                 SecretKey key = new SecretKeySpec(keyBytes, "AES");
+                                    if (!key.equals("")){
+                                 //get key
+                                 SecretKey skey = getKey("AES", key);
                                  //get input text for decryption
                                  String inputText = new String (textField.getText());
                                  //decrypt input
                                  try {
-                                     encryption encrypter = new encryption (key);
+                                     encryption encrypter = new encryption (skey);
                                      String inputDecrypted = encrypter.decrypt(inputText);
                                      //shows encrypted text in output
                                      printTextArea(inputDecrypted);
@@ -250,18 +261,22 @@ public class EncryptionGUI extends JFrame {
                                  }
                                  catch (Exception ex) {
                                      //handle exception
-                                 }//end catch                                                                        
+                                 }//end catch 
+                                    }//end inner if
+                                    else {
+                                        JFrame frame = new JFrame ();
+                                        JOptionPane.showMessageDialog(frame, "Please select a key");                                        
+                                    }
                              }//end if
                              else if (dropSelection.equals("Blowfish")){
-                                 //create key for Blowfish, needs to be updated with key not hardcoded
-                                 String fishKey = "abcdef1234567890abcdef1234567890";
-                                 byte[] keyBytes = DatatypeConverter.parseHexBinary(fishKey);
-                                 SecretKey key = new SecretKeySpec(keyBytes, "Blowfish");
+                                 if (!key.equals("")){
+                                 //get key
+                                    SecretKey skey = getKey("Blowfish", key);
                                  //get input text for encryption
                                  String inputText = new String (textField.getText());
                                  //create encryption
                                  try {
-                                     Blowfish fishEncrypt = new Blowfish(key);
+                                     Blowfish fishEncrypt = new Blowfish(skey);
                                      String inputDecrypted = fishEncrypt.decrypt(inputText);
                                      //shows encrypted text in output box
                                      printTextArea(inputDecrypted);
@@ -271,6 +286,11 @@ public class EncryptionGUI extends JFrame {
                                  catch (Exception ex) {
                                      //handle exception
                                  }//end catch
+                                 }
+                                 else {
+                                        JFrame frame = new JFrame ();
+                                        JOptionPane.showMessageDialog(frame, "Please select a key");                                        
+                                    }
                              }//end else if
                             else if (dropSelection.equals("3DES")){
                                  //create key for Blowfish, needs to be updated with key not hardcoded
@@ -290,7 +310,7 @@ public class EncryptionGUI extends JFrame {
                                      //handle exception
                                  }//end catch
                              }//end else if
-				 else if (dropSelection.equals("Reverse Cipher")){
+                             else if (dropSelection.equals("Reverse Cipher")){
                                 
                                 //get input text for encryption
                                 String inputText = new String (textField.getText());
@@ -342,9 +362,7 @@ public class EncryptionGUI extends JFrame {
                                     catch(Exception i) {
                                     	}//end catch
                                     }
-			 
-			
-			else 
+				else 
 				System.out.println("nope");
 			
 		});//end action listener
@@ -374,9 +392,67 @@ public class EncryptionGUI extends JFrame {
 		btnEncryptToFile.setPreferredSize(new Dimension(69, 23));
 		btnEncryptToFile.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		btnEncryptToFile.addActionListener(e -> {
-			/*
-			 * put action listener code here
-			 */
+			//get dropdown box selection
+                        String dropSelection = new String (comboBox.getSelectedItem().toString());
+                        //popup for user to input file name
+                        JFrame frame = new JFrame();
+                        String message = "Please enter a file name";
+                        String nameOfFile = JOptionPane.showInputDialog(frame, message);
+                        if (nameOfFile == null) {
+                          // User clicked cancel
+                        }
+                        //get input, encrypt, write to .txt file
+                        else {
+                            if (dropSelection.equals("AES")){
+                                if (!key.equals("")){
+                                 //get key
+                                 SecretKey skey = getKey("AES", key);
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                     encryption encrypter = new encryption (skey);
+                                     String inputEncrypted = encrypter.encrypt(inputText);
+                                     //use saveToFile method to write text to file
+                                     saveToFile(inputEncrypted, nameOfFile);
+                                     //clears input field
+                                     textField.setText(null);
+                                 }
+                                 catch (Exception ex) {
+                                     //handle exception
+                                 }//end catch
+                                }//end inside if
+                                else {
+                                        JFrame noKeyFrame = new JFrame ();
+                                        JOptionPane.showMessageDialog(noKeyFrame, "Please select a key");                                        
+                                    }
+                            }//end if
+                            else if (dropSelection.equals("Blowfish")){
+                                if (!key.equals("")){
+                                 //get key
+                                 SecretKey skey = getKey("Blowfish", key);
+                                 //get input text for encryption
+                                 String inputText = new String (textField.getText());
+                                 //create encryption
+                                 try {
+                                     encryption encrypter = new encryption (skey);
+                                     String inputEncrypted = encrypter.encrypt(inputText);
+                                     //use saveToFile method to write text to file
+                                     saveToFile(inputEncrypted, nameOfFile);
+                                     //clears input field
+                                     textField.setText(null);
+                                 }
+                                 catch (Exception ex) {
+                                     //handle exception
+                                 }//end catch
+                                }//end inside if
+                                else {
+                                        JFrame noKeyFrame = new JFrame ();
+                                        JOptionPane.showMessageDialog(noKeyFrame, "Please select a key");                                        
+                                    }
+                            }//end if
+                            
+                        }//end else
 			
 					});
 		btnEncryptToFile.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
@@ -391,11 +467,16 @@ public class EncryptionGUI extends JFrame {
 		btnLoadKeyFrom.addActionListener(e -> {
 			
 			//opens a jpane for user to pick the file that contains the key
-			JFileChooser keyloader = new JFileChooser(".");
-			keyloader.showOpenDialog(null);
-			/*
-			 * add code for load key btn
-			 */
+			JFileChooser keyLoader = new JFileChooser(".\\Keys\\");
+			keyLoader.showOpenDialog(null);			
+			//get file name
+			String fileName = keyLoader.getSelectedFile().getName();
+                        //get file
+                        File file = keyLoader.getSelectedFile();
+			//load file using loadFromFile method
+                        key = loadFromFile(file, fileName);
+                         
+			 
 			
 		});//end action listener for load key btn
 		
@@ -466,7 +547,7 @@ public class EncryptionGUI extends JFrame {
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		
-		textField = new JTextField();
+		textField = new JTextArea();
 		InputScrollPane.setViewportView(textField);
 		textField.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		textField.setForeground(new Color(0, 0, 0));
@@ -478,11 +559,78 @@ public class EncryptionGUI extends JFrame {
 		textArea.setBackground(Color.WHITE);
 		scrollPane.setViewportView(textArea);
 		contentPane.setLayout(gl_contentPane);
-        textArea.setEditable(false);               
+                textArea.setEditable(false);  
+                
 	}//end EncryptionGUI constructor        
 	
     //method prints output to textArea    
     public void printTextArea(String text) {
-    textArea.setText(text);
-    }//end printTextArea                                     
+        textArea.setText(text);
+    }//end printTextArea
+    
+    //method encrypts to file
+    public void saveToFile (String contents, String fileName) {
+        //String contentToFile = new String(contents);
+        BufferedWriter writer = null;
+        File file = new File(".\\Files\\", fileName+".txt");
+        
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.append(contents);
+            //writer.newLine();
+        }
+        // print error message if there is one
+        catch (IOException io) {
+            System.out.println("File IO Exception" + io.getMessage());
+        }
+        //close the file
+        finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+            //print error message if there is one
+            catch (IOException io) {
+                System.out.println("Issue closing the File." + io.getMessage());
+            }
+        }
+    }
+    
+    //method loads from file
+    public String loadFromFile (File file, String fileName){
+        String fileText = new String();
+        //File file = new File(".\\Files\\", fileName+".txt");
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line = reader.readLine(); 
+            StringBuilder sb = new StringBuilder(); 
+            while(line != null){ 
+                sb.append(line); 
+                line = reader.readLine(); 
+            }//end while
+            fileText = sb.toString();
+        }//end try
+        
+        catch(FileNotFoundException ex) {
+            System.out.println(
+                "Unable to open file '" + 
+                fileName + "'");                
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error reading file '" 
+                + fileName + "'");                  
+        }
+        return fileText;
+    }
+    
+    public SecretKey getKey (String type, String key){
+        //create key for AES, needs to be updated with key not hardcoded
+        //String aesKey = "abcdef1234567890abcdef1234567890";
+        byte[] keyBytes = DatatypeConverter.parseHexBinary(key);
+        SecretKey skey = new SecretKeySpec(keyBytes, type);
+        return skey;
+    }
+    
 }//end EncryptionGUI class
