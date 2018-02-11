@@ -376,11 +376,33 @@ public class EncryptionGUI extends JFrame {
 		btnEmail.setMaximumSize(new Dimension(69, 23));
 		btnEmail.addActionListener(e -> {
 		
-			/*
-			 * put action listener code here!!
-			 */
-			
-		});
+			try {
+				String secretMessage = new String();
+				// store text from output text area
+				secretMessage = textArea.getText();
+				if (secretMessage.length() != 0) {
+
+				  // Pop up window asking for destination email
+				  final JFrame frame = new JFrame();
+				  final String message = "Please enter the destination email address";
+				  String emailRecipient = null;
+				  emailRecipient = JOptionPane.showInputDialog(frame, message);
+
+				  if (emailRecipient != null && emailRecipient.length() != 0) {
+				    // Start Token validation
+				    TokenValidator oauth = new TokenValidator();
+				    // Renew token if expired
+				    oauth.renewToken();
+				    // Send email
+				    SecureEmail.emailMessage(secretMessage, emailRecipient,
+					oauth.getAccessToken());
+				  }
+				}
+			      } catch(Exception emailEx) {
+				System.out.println(emailEx.getMessage());
+			      }
+		}); // End of Email action listener
+
 		btnEmail.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/close-envelope.png")));
 		
         //scrollpane
