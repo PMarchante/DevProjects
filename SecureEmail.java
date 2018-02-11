@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 public class SecureEmail {
     
-  public void emailMessage(final String secureMessage, final String toUserEmail, final String oauthToken) {
+  public static void emailMessage(final String secureMessage, final String toUserEmail, final String oauthToken) {
     // Email Application constants
     final String FROM_USER_EMAIL = "sdevtestuser@gmail.com";
     final String FROM_USER_FULLNAME = "Simple Encryptor/Decryptor";
