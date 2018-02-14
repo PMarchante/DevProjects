@@ -12,6 +12,13 @@ public class transposition_cipher {
 	}
 
 	static String transpositionControl(String text, String key, String mode) throws Exception {
+			//displays dialog for user to enter Key
+		String[] choices = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
+		
+		key = (String) JOptionPane.showInputDialog(null,"Choose Key",
+				"Choose your key", JOptionPane.QUESTION_MESSAGE, null,choices, choices[0]); 
+		
+		
 		if (mode == "encrypt") {
 			return encrypt(text, key);
 
