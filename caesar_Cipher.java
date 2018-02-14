@@ -16,6 +16,15 @@ public class caesar_Cipher {
 		int keyVal = 0;
 		translated = "";
 		int key = 0;
+		
+		String[] choices = new String[81];
+		for (int i = 0; i < 81; i++) {
+			choices[i] = Integer.toString(i);
+		}
+
+		shiftKey = (String) JOptionPane.showInputDialog(null, "Choose Key", "Choose your key",
+				JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+		
 		try {
 			key = Integer.parseInt(shiftKey.trim());
 		} catch (NumberFormatException nfe) {
