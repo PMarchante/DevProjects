@@ -22,6 +22,11 @@ public class threeDES {
 
 	static String threeDESControl(String text, String key, String mode) throws Exception {
 
+		//Add this
+		//displays dialog for user to enter Key
+		key = JOptionPane.showInputDialog("Key");	
+		//Stop Add
+		
 		// variables
 		// create a binary key from the provided key
 		SecureRandom secureRandom = new SecureRandom(key.getBytes());
