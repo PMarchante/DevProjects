@@ -457,7 +457,7 @@ public class EncryptionGUI extends JFrame {
                                  String inputText = new String (textField.getText());
                                  //create encryption
                                  try {
-                                     encryption encrypter = new encryption (skey);
+                                     Blowfish encrypter = new Blowfish (skey);
                                      String inputEncrypted = encrypter.encrypt(inputText);
                                      //use saveToFile method to write text to file
                                      saveToFile(inputEncrypted, nameOfFile);
@@ -473,10 +473,90 @@ public class EncryptionGUI extends JFrame {
                                         JOptionPane.showMessageDialog(noKeyFrame, "Please select a key");                                        
                                     }
                             }//end if
-                            
-                        }//end else
-			
-					});
+			 else if (dropSelection.equals("3DES")){
+                            	 //create key for Blowfish, needs to be updated with key not hardcoded
+                                String threeDESKey = "This is a 3DES key Lets see it encrypt!!!";
+                                //get input text for encryption
+                                String inputText = new String (textField.getText());
+                                //create encryption
+                                try {
+                                    threeDES threeDES = new threeDES();
+                                    String inputEncrypted = threeDES.threeDESControl(inputText, threeDESKey, "encrypt");
+                                    //shows encrypted text in output box
+                                    printTextArea(inputEncrypted);
+                                    //clear input field
+                                   // textField.setText(null);
+                                    //use saveToFile method to write text to file
+                                    saveToFile(inputEncrypted, nameOfFile); 
+                                    
+                                }//end try
+                                //what kind of error are we trying to catch here??
+                                catch(Exception i) {
+                                	}//end catch
+                                }
+
+                            else if (dropSelection.equals("Reverse Cipher")){
+                            	 //get input text for encryption
+                                String inputText = new String (textField.getText());
+                                //create encryption
+                                try {
+                               	 revers_Cipher revers = new revers_Cipher();
+                                    String inputEncrypted = revers.revers_Cipher(inputText);
+                                    //shows encrypted text in output box
+                                    printTextArea(inputEncrypted);
+                                    saveToFile(inputEncrypted, nameOfFile);
+                                    //clear input field
+                                    textField.setText(null);
+                                }//end try
+                                //what kind of error are we trying to catch here??
+                                catch(Exception i) {
+                                	}//end catch
+                            }
+
+                            else if (dropSelection.equals("Caesar Cipher")){
+
+                                //get input text for encryption
+                                String inputText = new String (textField.getText());
+                                String key = "5";
+                                //create encryption
+                                try {
+                               	 caesar_Cipher revers = new caesar_Cipher();
+                                    String inputEncrypted = revers.cipher(inputText, key, "encrypt" );
+                                    //shows encrypted text in output box
+                                    printTextArea(inputEncrypted);
+                                    //use saveToFile method to write text to file
+                                    saveToFile(inputEncrypted, nameOfFile);
+                                    //clear input field
+                                    textField.setText(null);
+                                }//end try
+                                //what kind of error are we trying to catch here??
+                                catch(Exception i) {
+                                	}//end catch
+                                }
+                            	
+                            	
+                            else if (dropSelection.equals("Transposition Cipher")){
+
+                                //get input text for encryption
+                                String inputText = new String (textField.getText());
+                                String key = "5";
+                                //create encryption
+                                try {
+                               	 transposition_cipher transp = new transposition_cipher();
+                                   String inputEncrypted = transp.transpositionControl(inputText, key, "encrypt");
+                                    //shows encrypted text in output box
+                                    printTextArea(inputEncrypted);
+                                    //use saveToFile method to write text to file
+                                    saveToFile(inputEncrypted, nameOfFile);
+                                    //clear input field
+                                    textField.setText(null);
+                                }//end try
+                                //what kind of error are we trying to catch here??
+                                catch(Exception i) {
+                                	}//end catch
+                            }//end if 	                   
+			}//end else
+			});
 		btnEncryptToFile.setIcon(new ImageIcon(EncryptionGUI.class.getResource("/Resources/lock.png")));
 		
 		JScrollPane InputScrollPane = new JScrollPane();
