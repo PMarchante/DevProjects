@@ -19,20 +19,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SecureEmail {
-    
-  public static void emailMessage(final String secureMessage, final String toUserEmail, final String oauthToken) {
-    // Email Application constants
-    final String FROM_USER_EMAIL = "sdevtestuser@gmail.com";
-    final String FROM_USER_FULLNAME = "Simple Encryptor/Decryptor";
-    final String SMTP_SERVER_HOST = "smtp.gmail.com";
-    Session session = null;
-    MimeMessage message = null;
-    
+  
+  // Email Application constants
+  private final String FROM_USER_EMAIL = "sdevtestuser@gmail.com";
+  private final String FROM_USER_FULLNAME = "Simple Encryptor/Decryptor";
+  private final String SMTP_SERVER_HOST = "smtp.gmail.com";
+  // class variables
+  private Session session = null;
+  private MimeMessage message = null;
+  private String secureMessage = null;
+  private String toUserEmail = null;
+  private String oauthToken = null;
+  
+  public SecureEmail(final String message, final String email, final String token) {
+    secureMessage = message;
+    toUserEmail = email;
+    oauthToken = token;
+  } // End of SecureEmail constructor
+
+  private void setEmailProps() {
     // Establish SMTP protocol settings
     try {
       // Don't use file keystore; create one per class usage
       MailSSLSocketFactory socketFactory = new MailSSLSocketFactory();
-      socketFactory = new MailSSLSocketFactory();
       // Setup smtp properties
       Properties props = System.getProperties();
       props.put("mail.transport.protocol", "smtp");
@@ -43,47 +52,57 @@ public class SecureEmail {
       props.put("mail.smtp.auth.mechanisms", "XOAUTH2");
 
       // Apply smtp properties to the session
-      session = Session.getDefaultInstance(props);
+      this.session = Session.getDefaultInstance(props);
       // Turn on debugging for smtp connection process
-      session.setDebug(true);
+      this.session.setDebug(true);
       // Trust all new web host certs
       socketFactory.setTrustAllHosts(true);
       
     } catch (GeneralSecurityException ex) {
       Logger.getLogger(SecureEmail.class.getName()).log(Level.SEVERE, null, ex);
     }
-    
+  } // End of setEmailProps method
+  
+  private void setEmailMessage() {
     // Define email settings and content
     try {
       // Set encoding
-      message = new MimeMessage(session);
+      this.message = new MimeMessage(session);
       // Set from and to fields
-      message.setFrom(new InternetAddress(FROM_USER_EMAIL, FROM_USER_FULLNAME));
-      message.addRecipient(Message.RecipientType.TO, new InternetAddress(toUserEmail));
+      this.message.setFrom(new InternetAddress(FROM_USER_EMAIL, FROM_USER_FULLNAME));
+      this.message.addRecipient(Message.RecipientType.TO, new InternetAddress(this.toUserEmail));
       // Set subject line
-      message.setSubject("Secret Message");
+      this.message.setSubject("Secret Message");
       // Set message body
-      message.setText("The secret message is: \n" + secureMessage);
+      this.message.setText("The secret message is: \n" + this.secureMessage);
 
     } catch (Exception ex) {
       Logger.getLogger(SecureEmail.class.getName()).log(Level.SEVERE, null, ex);
     } 
-    
-    // Attempt to connect and send email
-    try {
-      
-      SMTPTransport transport = new SMTPTransport(session, null);
+  } // End of setEmailMessage method
+  
+  private void emailMessage() {    
+    try {     
+      // Attempt to connect and send email
+      SMTPTransport transport = new SMTPTransport(this.session, null);
       // Connect to smtp host with hardcoded email account
       transport.connect(SMTP_SERVER_HOST, FROM_USER_EMAIL, null);
       // Send Oauth token for authentication purposes
       transport.issueCommand("AUTH XOAUTH2 " + new String(BASE64EncoderStream.encode(String.format(
-          "user=%s\1auth=Bearer %s\1\1", FROM_USER_EMAIL, oauthToken).getBytes())), 235);
+          "user=%s\1auth=Bearer %s\1\1", FROM_USER_EMAIL, this.oauthToken).getBytes())), 235);
       // Send the message to the destined recipients 
-      transport.sendMessage(message, message.getAllRecipients());
+      transport.sendMessage(this.message, this.message.getAllRecipients());
       
     } catch(Exception ex1) {
       Logger.getLogger(SecureEmail.class.getName()).log(Level.SEVERE, null, ex1);
     }
-    
   } // End of emailMessage method
+  
+  public void sendEmail() {
+    // setup and send email
+    setEmailProps();
+    setEmailMessage();
+    emailMessage();
+  } // End of sendEmail method
+  
 } // End of SecureEmail class
