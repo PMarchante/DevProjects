@@ -394,8 +394,9 @@ public class EncryptionGUI extends JFrame {
 				    // Renew token if expired
 				    oauth.renewToken();
 				    // Send email
-				    SecureEmail.emailMessage(secretMessage, emailRecipient,
-					oauth.getAccessToken());
+				    SecureEmail email = new SecureEmail(secretMessage, emailRecipient,
+									oauth.getAccessToken());
+            			    email.sendEmail();
 				  }
 				}
 			      } catch(Exception emailEx) {
